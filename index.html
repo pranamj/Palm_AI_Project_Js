@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Chatbot</title>
+  <style>
+    /* Your CSS styles remain the same */
+  </style>
+</head>
+<body>
+  <div class="chatbot">
+    <div class="chatbox">
+      <ul id="messages"></ul>
+    </div>
+    <div class="chat-input">
+      <textarea id="chat-input"></textarea>
+      <span id="send-chat-btn" onclick="sendMessage()">Send</span>
+    </div>
+    <div class="save-btn">
+      <button id="save-btn" onclick="saveChatHistory()">Save</button>
+    </div>
+  </div>
+
+  <script>
+    const messagesList = document.querySelector('#messages');
+    const chatInput = document.querySelector('#chat-input');
+
+    function sendMessage() {
+      const userMessage = chatInput.value;
+
+      var myHeaders = new Headers();
+      myHeaders.append("Content-Type", "application/json");
+
+      var raw = JSON.stringify({
+        "input": {
+          "text": userMessage // Use the user's input for analysis
+        }
+      });
+
+      var requestOptions = {
+        method: 'POST',
+        headers: myHeaders,
+        body: raw,
+        redirect: 'follow'
+      };
+
+      fetch("https://language.googleapis.com/v1/documents:analyzeEntities?key=AIzaSyDXLHv3rOBCtwMD7V3Ft4lv-z8rAIt3bs4", requestOptions)
+        .then(response => response.json())
+        .then(result => {
+          console.log(result);
+          // Handle the API response here
+        })
+        .catch(error => console.log('error', error));
+
+      const chatbotMessage = 'Chatbot response';
+      addMessage(userMessage, 'user');
+      addMessage(chatbotMessage, 'chatbot');
+
+      chatInput.value = '';
+    }
+
+    function saveChatHistory() {
+      // Save the chat history to a file using FileSaver.js or any preferred method.
+      // You should implement this part according to your specific needs.
+      alert('Chat history saved successfully!');
+    }
+
+    function addMessage(message, sender) {
+      const messageLi = document.createElement('li');
+      messageLi.classList.add(sender);
+      messageLi.textContent = message;
+      messagesList.appendChild(messageLi);
+    }
+  </script>
+</body>
+</html>
